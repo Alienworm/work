@@ -7,27 +7,35 @@
 
 using namespace std;
 
+struct guest {
+    double arriveTime;
+    double leaveTime;
+};
+
 int main() {
-    for (int windows = 0; windows < 10; windows++) {
-        Queue<int> guest;
-        int cashierTime[100] = {0};
-        int totalTime = 0, averageTime = 0, departs = 0;
-        for (int cnt = 1; cnt <= 100; cnt++)
-            guest.Push(cnt * 15);
-        while (!guest.IsEmpty()) {
+    for (int windows = 0; windows <= 10; windows++) {
+        Queue<guest>guestQueue;
+        int totalTime = 0;
+        int otherTime[100] = {0};
+        for (int i = 0; i < 100; i++) {
+            guest tmp;
+            tmp.arriveTime = i * 15;
+            guestQueue.Push(tmp);
+        }
+        while (!guestQueue.IsEmpty()) {
             for (int i = 0; i <= windows; i++) {
-                if (!guest.IsEmpty()) {
-                    int now = guest.Pop();
-                    if (now > cashierTime[i])
-                        departs = now + 120;
+                if (!guestQueue.IsEmpty()) {
+                    guest now = guestQueue.Pop();
+                    if (now.arriveTime > otherTime[i])
+                        now.leaveTime = now.arriveTime + 120;
                     else
-                        departs = cashierTime[i] + 120;
-                    cashierTime[i] = departs;
-                    totalTime += departs - now;
+                        now.leaveTime = otherTime[i] + 120;
+                    otherTime[i] = now.leaveTime;
+                    totalTime += now.leaveTime - now.arriveTime;
                 }
             }
         }
-        cout << totalTime << endl;       
+        cout << totalTime << endl;   
     }
     system("pause");
 }
