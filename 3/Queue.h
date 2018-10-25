@@ -12,6 +12,7 @@ template <class T>
 class Queue {
 public:
     Queue();
+    bool IsEmpty();
     void Push(T data);
     T Pop();
     T Front();
@@ -67,6 +68,11 @@ template <class T>
 T Queue<T>::Back() {
     if (queueLength > 0)
         return tail->next->data;
+}
+
+template <class T>
+bool Queue<T>::IsEmpty() {
+    return queueLength == 0 ? true : false;
 }
 
 template <class T>
