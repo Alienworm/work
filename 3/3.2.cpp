@@ -16,7 +16,7 @@ int main() {
     for (int windows = 0; windows <= 10; windows++) {
         Queue<guest>guestQueue;
         int totalTime = 0;
-        int otherTime[100] = {0};
+        int otherTime[11] = {0};
         for (int i = 0; i < 100; i++) {
             guest tmp;
             tmp.arriveTime = i * 15;
@@ -35,7 +35,7 @@ int main() {
                 }
             }
         }
-        cout << totalTime << endl;   
+        cout << totalTime / 100 << endl;   
     }
     system("pause");
 }
