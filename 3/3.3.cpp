@@ -20,7 +20,7 @@ struct node {
     }
 };
 
-void gotoxy(int x,int y) { // 将光标移动到指定坐标 
+void gotoxy(int x,int y) {  
 	COORD pos = {x,y};
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleCursorPosition(hOut,pos);
@@ -85,6 +85,7 @@ void Maze::CreateMaze(int den) {
     mazeStack.Push(start);
 }
 
+
 void Maze::InitRecode() {
     Stack<node>tmpStack = mazeStack;
     for (int i = 0; i < mazeLength; i++) {
@@ -118,14 +119,12 @@ void Maze::GetPath(int x, int y) {
             mazeStack.Push(now);
             gotoxy(now.x * 2, now.y);
             cout << icon[now.dir];
-            // Sleep(500);
         }
         tmpStack = mazeStack;
         while (!tmpStack.EmptyStack()) {
             node now = tmpStack.Pop();
             gotoxy(now.x * 2, now.y);
             cout << "  ";
-            // Sleep(100);
         }
         return;
     }
