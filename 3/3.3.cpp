@@ -1,4 +1,4 @@
-#include "Stack.h"
+#include "Maze.h"
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
@@ -20,16 +20,18 @@ struct node {
     }
 };
 
-void gotoxy(int x,int y) {  
-	COORD pos = {x,y};
-	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(hOut,pos);
+
+
+void color(int x) {
+	if(x >= 0 && x <= 15)
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),x);
+	else
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),7);	
 }
 
-class Maze {
+class PathFind {
 public:
-    Maze(int len, int hei);
-    void CreateMaze(int den);
+    PathFind(int len, int hei, int model);
     void GetPath(int x, int y);
     void ShowMaze();  
     void ShowShortPath();  
@@ -47,7 +49,7 @@ private:
     node end;
 };
 
-Maze::Maze(int len, int hei) {
+PathFind::PathFind(int len, int hei, int model) {
     mazeLength = len;
     mazeHeight = hei;
     maze = new char *[mazeLength];
@@ -56,37 +58,28 @@ Maze::Maze(int len, int hei) {
         maze[i] = new char[mazeHeight];
         recode[i] = new int[mazeHeight];
     }
-    minStep = 0x3f3f3f3f;
-}
-
-void Maze::CreateMaze(int den) {
-    srand(time(NULL));
-    if (den == 0)
-        den = 1;
-    for (int i = 0; i < mazeLength; i++) {
-        for (int j = 0; j < mazeHeight; j++) {
-            int wall = rand() % den;
-            maze[i][j] = '.';
-            if (wall == 1) 
-                maze[i][j] = '#';
-            maze[0][j] = '#';
-            maze[mazeLength - 1][j] = '#';
-        }
-        maze[i][0] = '#';
-        maze[i][mazeHeight - 1] = '#';
+    Maze newMaze(len, hei);
+    if (model == 0)
+        maze = newMaze.CreateNormalMaze();
+    if (model == 1) {
+        int den;
+        cout << "input wallDensity : ";
+        cin >> den;
+        maze = newMaze.CreateRandomMaze(den);
     }
-    maze[1][1] = '.';
-    maze[mazeLength - 2][mazeHeight - 2] = '.';
+    if (model == 2) {
+        maze = newMaze.CreateMaze();
+    }
     start.x = 1;
     start.y = 1;
     start.dir = 0;
     end.x = mazeLength - 2;
     end.y = mazeHeight - 2;
     mazeStack.Push(start);
+    minStep = 0x3f3f3f3f;
 }
 
-
-void Maze::InitRecode() {
+void PathFind::InitRecode() {
     Stack<node>tmpStack = mazeStack;
     for (int i = 0; i < mazeLength; i++) {
         for (int j = 0; j < mazeHeight; j++) {
@@ -98,7 +91,7 @@ void Maze::InitRecode() {
     }
 }
 
-void Maze::GetPath(int x, int y) {
+void PathFind::GetPath(int x, int y) {
     if (x == end.x && y == end.y) {
         if (minStep > mazeStack.Size()) {
             minStep = mazeStack.Size();
@@ -117,6 +110,7 @@ void Maze::GetPath(int x, int y) {
         while (!tmpStack.EmptyStack()) {
             node now = tmpStack.Pop();
             mazeStack.Push(now);
+            color(14);
             gotoxy(now.x * 2, now.y);
             cout << icon[now.dir];
         }
@@ -149,18 +143,29 @@ void Maze::GetPath(int x, int y) {
     }
 }
 
-void Maze::ShowShortPath() {
+void PathFind::ShowShortPath() {
+    color(12);
+    gotoxy(start.x * 2, start.y);
+    cout << icon[4];
+    gotoxy(end.x * 2, end.y);
+    cout << icon[4];
+    color(14);
     while (!shortPath.EmptyStack()) {
         node now = shortPath.Pop();
+        if (now.x == start.x && now.y == start.y)
+            continue;
+        if (now.x == end.x && now.y == end.y)
+            break;
         gotoxy(now.x * 2, now.y);
         cout << icon[now.dir];
         Sleep(100);
     }
+    color(7);
     gotoxy(0, mazeHeight);
-    cout << "最小步数 : " << minStep << endl;
+    cout << "步数为 : " << minStep << endl;
 }
 
-void Maze::ShowMaze() {
+void PathFind::ShowMaze() {
     for (int i = 0; i < mazeLength; i++) {
         for (int j = 0; j < mazeHeight; j++) {
             gotoxy(i * 2, j);
@@ -174,15 +179,14 @@ void Maze::ShowMaze() {
 
 int main() {
     while (true) {
-        int len, hei, den;
+        int len, hei, model;
         cout << "input mazeLength : ";
         cin >> len;
         cout << "input mazeHeight : ";
         cin >> hei;
-        cout << "input wallDensity : ";
-        cin >> den;
-        Maze test(len, hei);
-        test.CreateMaze(den);
+        cout << "input maze model : ";
+        cin >> model;
+        PathFind test(len, hei, model);
         test.ShowMaze();
         test.InitRecode();
         test.GetPath(1, 1);

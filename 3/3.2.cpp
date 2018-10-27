@@ -13,7 +13,6 @@ struct guest {
 };
 
 void showWindows(int windows) {
-    gotoxy(0, windows);
     Queue<guest>guestQueue;
     int totalTime = 0;
     int otherTime[11] = {0};
