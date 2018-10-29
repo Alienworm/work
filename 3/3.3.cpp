@@ -20,7 +20,11 @@ struct node {
     }
 };
 
-
+void gotoxy(int x,int y) {  
+	COORD pos = {x,y};
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hOut,pos);
+}
 
 void color(int x) {
 	if(x >= 0 && x <= 15)
@@ -66,9 +70,6 @@ PathFind::PathFind(int len, int hei, int model) {
         cout << "input wallDensity : ";
         cin >> den;
         maze = newMaze.CreateRandomMaze(den);
-    }
-    if (model == 2) {
-        maze = newMaze.CreateMaze();
     }
     start.x = 1;
     start.y = 1;

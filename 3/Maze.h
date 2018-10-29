@@ -9,20 +9,11 @@ using std::cout;
 using std::string;
 using std::endl;
 
-const string wall[] = {"□", "■"};
-
-void gotoxy(int x,int y) {  
-	COORD pos = {x,y};
-	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(hOut,pos);
-}
-
 class Maze {
 public:
 	Maze(int len, int hei);
 	char **CreateNormalMaze();
     char **CreateRandomMaze(int den);
-    char **CreateMaze();
 	bool isFullMark();
 private:
     struct node {
@@ -131,53 +122,4 @@ char **Maze::CreateRandomMaze(int den) {
     maze[1][1] = '.';
     maze[mazeLength - 2][mazeHeight - 2] = '.';
     return maze;
-}
-
-char **Maze::CreateMaze() {
-    maze[1][1] = '.';
-    maze[mazeLength - 2][mazeHeight - 2] = '.';
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO bInfo;
-	INPUT_RECORD	mouseRec;
-	DWORD			res;
-	COORD			crPos, crHome = { 0, 0 };
-    for (int i = 0; i < mazeLength; i++) {
-        for (int j = 0; j < mazeHeight; j++) {
-            gotoxy(i, j);
-            cout << maze[i][j];
-        }
-    }
-    gotoxy(0, mazeHeight + 1);
-    cout << "左键放置通道" << endl;
-    cout << "右键放置墙体" << endl;
-    cout << "双击退出编辑" << endl;
-	while (true) {
-		ReadConsoleInput(hIn, &mouseRec, 1, &res);
-		if (mouseRec.EventType == MOUSE_EVENT) {
-			if (mouseRec.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
-				if (mouseRec.Event.MouseEvent.dwEventFlags == DOUBLE_CLICK) 
-					break;	// 左键双击 退出循环
-			}
-			crPos = mouseRec.Event.MouseEvent.dwMousePosition;
-			GetConsoleScreenBufferInfo(hOut, &bInfo);
-			SetConsoleCursorPosition(hOut, crHome);
-			SetConsoleCursorPosition(hOut, bInfo.dwCursorPosition);
-			switch (mouseRec.Event.MouseEvent.dwButtonState) {
-			case FROM_LEFT_1ST_BUTTON_PRESSED:			// 左键 输出A
-				gotoxy(crPos.X, crPos.Y);
-                cout << '.';
-                maze[crPos.X][crPos.Y] = '.';
-				break;		// 如果使用printf输出，则之前需要先设置光标的位置
-			case RIGHTMOST_BUTTON_PRESSED:				// 右键 输出a
-				gotoxy(crPos.X, crPos.Y);
-                cout << '#';
-                maze[crPos.X][crPos.Y] = '#';
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	return maze;
 }

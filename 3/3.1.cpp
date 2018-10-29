@@ -1,11 +1,11 @@
 #include "Stack.h"
 #include <iostream>
 #include <string>
-// start
+
 using namespace std;
 
 int main() {
-    Stack <char> test(100);
+    Stack<char>test;
     while (true) {
         string str;
         cout << "Please input a string : ";
