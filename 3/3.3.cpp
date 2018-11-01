@@ -114,12 +114,14 @@ void PathFind::GetPath(int x, int y) {
             color(14);
             gotoxy(now.x * 2, now.y);
             cout << icon[now.dir];
+            Sleep(100);
         }
         tmpStack = mazeStack;
         while (!tmpStack.EmptyStack()) {
             node now = tmpStack.Pop();
             gotoxy(now.x * 2, now.y);
             cout << "  ";
+            Sleep(100);
         }
         return;
     }
