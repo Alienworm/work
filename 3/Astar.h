@@ -227,5 +227,5 @@ void AstarPathFind::StartSearch() {
         ShowPath();
         Sleep(100);
     }
-    gotoxy(mazeHeight + 1, 0);
+    gotoxy(mazeHeight * 2+ 1, 0);
 }
