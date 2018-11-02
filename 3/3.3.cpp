@@ -65,12 +65,6 @@ PathFind::PathFind(int len, int hei, int model) {
     Maze newMaze(len, hei);
     if (model == 0)
         maze = newMaze.CreateNormalMaze();
-    if (model == 1) {
-        int den;
-        cout << "input wallDensity : ";
-        cin >> den;
-        maze = newMaze.CreateRandomMaze(den);
-    }
     start.x = 1;
     start.y = 1;
     start.dir = 0;
@@ -103,26 +97,6 @@ void PathFind::GetPath(int x, int y) {
                 shortPath.Push(now);
             }
         }
-        Stack<node>tmpStack;
-        while (!mazeStack.EmptyStack()) {
-            node now = mazeStack.Pop();
-            tmpStack.Push(now);
-        }
-        while (!tmpStack.EmptyStack()) {
-            node now = tmpStack.Pop();
-            mazeStack.Push(now);
-            color(14);
-            gotoxy(now.x * 2, now.y);
-            cout << icon[now.dir];
-            Sleep(100);
-        }
-        tmpStack = mazeStack;
-        while (!tmpStack.EmptyStack()) {
-            node now = tmpStack.Pop();
-            gotoxy(now.x * 2, now.y);
-            cout << "  ";
-            Sleep(100);
-        }
         return;
     }
     for (int i = 0; i < 4; i++) {
@@ -139,9 +113,16 @@ void PathFind::GetPath(int x, int y) {
             mazeStack.Push(top);
             recode[now.x][now.y] = 1;
             mazeStack.Push(now);
+            color(14);
+            gotoxy(now.x * 2, now.y);
+            cout << icon[now.dir];
+            Sleep(100);
             GetPath(now.x, now.y);
             recode[now.x][now.y] = 0;
             mazeStack.Pop();
+            gotoxy(now.x * 2, now.y);
+            cout << "  ";
+            Sleep(100);
         }
     }
 }
@@ -165,7 +146,7 @@ void PathFind::ShowShortPath() {
     }
     color(7);
     gotoxy(0, mazeHeight);
-    cout << "²½ÊýÎª : " << minStep << endl;
+    cout << "minsteps : " << minStep << endl;
 }
 
 void PathFind::ShowMaze() {

@@ -3,9 +3,9 @@
 #include <iostream>
 
 template <class T>
-struct node {
+struct QueueNode {
     T data;
-    struct node<T> *next;
+    struct QueueNode<T> *next;
 };
 
 template <class T>
@@ -13,45 +13,57 @@ class Queue {
 public:
     Queue();
     bool IsEmpty();
-    void Push(T data);
-    T Pop();
+    void PushFront(T data);
+    void PushBack(T data);
+    T PopFront();
+    T PopBack();
     T Front();
     T Back();
     int Length();
 private:
-    node<T> *head;
-    node<T> *tail;
+    QueueNode<T> *head;
+    QueueNode<T> *tail;
     int queueLength;
 };
 
 template <class T>
 Queue<T>::Queue() {
-    tail = new node<T>;
-    tail->next = NULL;
-    head = tail;
+    tail = new QueueNode<T>;
+    head = new QueueNode<T>;
+    tail->next = head;
     queueLength = 0;
 }
 
 template <class T>
-void Queue<T>::Push(T data) {
-    node<T> *newNode = new node<T>;
+void Queue<T>::PushBack(T data) {
+    QueueNode<T> *newNode = new QueueNode<T>;
     newNode->data = data;
     newNode->next = tail->next;
     tail->next = newNode;
     queueLength++;
-    if (queueLength == 1)
-        head = newNode;
 }
 
 template <class T>
-T Queue<T>::Pop() {
+void Queue<T>::PushFront(T data) {
+    QueueNode<T> *newNode = new QueueNode<T>;
+    newNode->data = data;
+    QueueNode<T> *tmpTail = tail;
+    while (tmpTail->next != head) 
+        tmpTail = tmpTail->next;
+    newNode->next = tmpTail->next;
+    tmpTail->next = newNode;
+    queueLength++;
+}
+
+template <class T>
+T Queue<T>::PopFront() {
     if (queueLength > 0) {
-        node<T> *tmpHead = head;
+        QueueNode<T> *tmpTail = tail;
+        while (tmpTail->next->next != head)
+            tmpTail = tmpTail->next;
+        QueueNode<T> *tmpHead = tmpTail->next;
         T tmpData = tmpHead->data;
-        node<T> *tmpNode = tail;
-        while (tmpNode->next != head) 
-            tmpNode = tmpNode->next;
-        head = tmpNode;
+        tmpTail->next = tmpHead->next;
         delete(tmpHead);
         queueLength--;
         return tmpData;
@@ -59,9 +71,25 @@ T Queue<T>::Pop() {
 }
 
 template <class T>
+T Queue<T>::PopBack() {
+    if (queueLength > 0) {
+        QueueNode<T> *tmp = tail->next;
+        T tmpData = tmp->data;
+        tail->next = tmp->next;
+        delete(tmp);
+        queueLength--;
+        return tmpData;
+    }
+}
+
+template <class T>
 T Queue<T>::Front() {
-    if (queueLength > 0)
-        return head->data;
+    if (queueLength > 0) {
+        QueueNode<T> *tmpTail = tail;
+        while (tmpTail->next != head)
+            tmpTail = tmpTail->next;
+        return tmpTail->data;
+    }
 }
 
 template <class T>
