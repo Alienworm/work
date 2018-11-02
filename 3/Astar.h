@@ -23,7 +23,7 @@ struct node {
     }
 };
 
-const string icon[] = {"กý", "ก๚", "กü", "ก๛", "ก๕", "ก๖"};
+const string icon[] = {"ยกรฝ", "ยกรบ", "ยกรผ", "ยกรป", "ยกรต", "ยกรถ"};
 
 class AstarPathFind {
 public:
@@ -227,5 +227,5 @@ void AstarPathFind::StartSearch() {
         ShowPath();
         Sleep(100);
     }
-    gotoxy(mazeHeight + 1, 0);
+    gotoxy(mazeHeight * 2 + 1, 0);
 }
