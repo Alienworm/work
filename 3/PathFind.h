@@ -43,6 +43,7 @@ private:
     Stack<PathNode> shortPath;
     PathNode start;
     PathNode end;
+    int next[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 };
 
 void PathFind::gotoxy(int x,int y) {  
@@ -103,7 +104,6 @@ void PathFind::GetPath(int x, int y) {
         return;
     }
     for (int i = 0; i < 4; i++) {
-        int next[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
         PathNode now;
         now.x = x + next[i][0];
         now.y = y + next[i][1];
