@@ -123,3 +123,4 @@ char **Maze::CreateRandomMaze(int den) {
     maze[mazeLength - 2][mazeHeight - 2] = '.';
     return maze;
 }
+
