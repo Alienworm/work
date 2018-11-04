@@ -172,7 +172,7 @@ void AstarPathFind::StartSearch() {
     while (!openSet.IsEmpty()) {
         openSet = FindMinNodeF(openSet);
         AstarNode now = openSet.Front();
-        color(10);
+        color(14);
         gotoxy(now.x * 2, now.y);
         cout << sing[now.dir];
         if (now.x == finish.x && now.y == finish.y) {
@@ -198,7 +198,6 @@ void AstarPathFind::StartSearch() {
                 path[tx][ty].y = now.y;
                 openSet.PushFront(nei);
                 flag = 1;
-                color(10);
                 gotoxy(now.x * 2, now.y);
                 cout << sing[now.dir];
             }
@@ -213,7 +212,6 @@ void AstarPathFind::StartSearch() {
             nei.f = nei.g + nei.h;
             nodeMaze[tx][ty] = nei;
             openSet.PushFront(nei);
-            color(10);
             gotoxy(now.x * 2, now.y);
             cout << sing[now.dir];
         }
