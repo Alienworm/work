@@ -45,7 +45,7 @@ int main() {
         if (mazeModel == 1)
 		    avgNode->maze = newMaze.CreateNormalMaze();
 		if (mazeModel == 2)
-            avgNode->maze = newMaze.CreateRandomMaze(4);
+            avgNode->maze = newMaze.CreateRandomMaze(3);
         /*
         thread astr(AstarPathFinding, avgNode);
 		Sleep(100);
