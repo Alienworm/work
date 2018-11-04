@@ -3,7 +3,7 @@
 #include <iostream>
 
 #define STACK_ADD_LEN 50
-#define STACK_MAX_LEN 10000  
+#define STACK_MAX_LEN 100000 
 
 template <class T>
 class Stack {
@@ -27,7 +27,7 @@ private:
 
 template <class T>
 Stack<T>::Stack() {
-    stackSize = 50;
+    stackSize = 100;
     stack = new T[stackSize];
     stackLength = 0;
 }

@@ -7,7 +7,6 @@
 
 using std::string;
 using std::cout;
-using std::min;
 using std::endl;
 
 string icon[] = {"¡ý", "¡ú", "¡ü", "¡û", "¡õ", "¡ö"};
@@ -46,7 +45,8 @@ private:
     int next[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 };
 
-void PathFind::gotoxy(int x,int y) {  
+void PathFind::gotoxy(int x,int y) {
+    x += mazeLength * 2;  
 	COORD pos = {x,y};
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleCursorPosition(hOut,pos);
@@ -144,15 +144,14 @@ void PathFind::ShowShortPath() {
         if (now.x == end.x && now.y == end.y)
             break;
         gotoxy(now.x * 2, now.y);
-        cout << icon[now.dir];
+        cout << icon[5];
         Sleep(100);
     }
     color(15);
-    gotoxy(0, mazeHeight);
-    cout << "minsteps : " << minStep << endl;
 }
 
 void PathFind::ShowMaze() {
+	color(15);
     for (int i = 0; i < mazeLength; i++) {
         for (int j = 0; j < mazeHeight; j++) {
             gotoxy(i * 2, j);
