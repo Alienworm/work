@@ -9,11 +9,7 @@ using std::string;
 using std::cout;
 using std::endl;
 
-<<<<<<< HEAD
 string icon[] = {"¡ý", "¡ú", "¡ü", "¡û", "¡õ", "¡ö"};
-=======
-string icon[] = {"â†“", "â†’", "â†‘", "â†", "â–¡", "â– "};
->>>>>>> 2adeb388b46b261494c565222f9b80cdf4159e4a
 
 struct PathNode {
     int x;
@@ -166,8 +162,4 @@ void PathFind::ShowMaze() {
         }
     }
     InitRecode();
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 2adeb388b46b261494c565222f9b80cdf4159e4a
