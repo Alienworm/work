@@ -12,41 +12,37 @@ using std::string;
 using std::cout;
 using std::min;
 
-struct node {
+string sing[] = {"↓", "→", "↑", "←", "□", "■"};
+
+struct AstarNode {
     int x, y;
     int f, g, h;
     int dir;
-    node() {
+    AstarNode() {
         f = 0;
         g = 0;
         h = 0;
     }
 };
 
-const string icon[] = {"¡ý", "¡ú", "¡ü", "¡û", "¡õ", "¡ö"};
-
 class AstarPathFind {
 public:
     void InitMaze(char **_maze, int _mazeLength, int _mazeHeight);
     void ShowMaze();
-    void ShowSetNode(Queue<node> set, int col);
-    void ShowPath();
     void GetPath(int x, int y);
-    int GetH(node first, node second);
-    bool IsInclude(Queue<node> set, node qur);
+    int GetH(AstarNode first, AstarNode second);
+    bool IsInclude(Queue<AstarNode> set, AstarNode qur);
     void StartSearch();
     void gotoxy(int x, int y);
     void color(int x);
-    Queue<node> FindMinNodeF(Queue<node> set);
+    Queue<AstarNode> FindMinNodeF(Queue<AstarNode> set);
 private:
-    
+    Queue<AstarNode> openSet;
+    Queue<AstarNode> closeSet;
 private:
-    Queue<node> openSet;
-    Queue<node> closeSet;
-private:
-    node **nodeMaze;
-    node **path;
-    node start, finish;
+    AstarNode **nodeMaze;
+    AstarNode **path;
+    AstarNode start, finish;
     char **maze;
     int mazeLength;
     int mazeHeight;
@@ -71,12 +67,12 @@ void AstarPathFind::InitMaze(char **_maze, int _mazeLength, int _mazeHeight) {
     mazeLength = _mazeLength;
     mazeHeight = _mazeHeight;
     maze = new char *[mazeLength];
-    path = new node *[mazeLength];
-    nodeMaze = new node *[mazeLength];
+    path = new AstarNode *[mazeLength];
+    nodeMaze = new AstarNode *[mazeLength];
     for (int i = 0; i < mazeLength; i++) {
         maze[i] = new char[mazeHeight];
-        path[i] = new node[mazeHeight];
-        nodeMaze[i] = new node[mazeHeight];
+        path[i] = new AstarNode[mazeHeight];
+        nodeMaze[i] = new AstarNode[mazeHeight];
         for (int j = 0; j < mazeHeight; j++) {
             maze[i][j] = _maze[i][j];
             nodeMaze[i][j].x = i;
@@ -94,63 +90,52 @@ void AstarPathFind::InitMaze(char **_maze, int _mazeLength, int _mazeHeight) {
 }
 
 void AstarPathFind::ShowMaze() {
+    color(15);
     for (int i = 0; i < mazeLength; i++) {
         for (int j = 0; j < mazeHeight; j++) {
             gotoxy(i * 2, j);
             if (maze[i][j] == '#')
-                cout << icon[5];
+                cout << sing[5];
             else
                 cout << "  ";
         }
     }
 }
 
-void AstarPathFind::ShowSetNode(Queue<node> set, int col) {
-    Queue<node> tmpSet;
-    while (!set.IsEmpty()) {
-        node now = set.PopFront();
-        tmpSet.PushBack(now);
-    }
-    while (!tmpSet.IsEmpty()) {
-        node now = tmpSet.PopFront();
-        set.PushBack(now);
-        color(col);
-        gotoxy(now.x * 2, now.y);
-        if (col == 4)
-            cout << icon[now.dir];
-        else
-            cout << icon[now.dir];
-    }
-}
-
-void AstarPathFind::ShowPath() {
-    ShowSetNode(openSet, 4);
-    ShowSetNode(closeSet, 14);
-}
-
 void AstarPathFind::GetPath(int x, int y) {
-    if (x == start.x && y == start.y)
-        return;
-    GetPath(path[x][y].x, path[x][y].y);
+    color(12);
+    gotoxy(start.x * 2, start.y);
+    cout << sing[4];
+    gotoxy(finish.x * 2, finish.y);
+    cout << sing[4];
+    color(14);
     gotoxy(x * 2, y);
-    cout << icon[5];
+    cout << sing[5];
+    if (x == start.x && y == start.y) {
+        color(12);
+        gotoxy(start.x * 2, start.y);
+        cout << sing[4];
+        return;
+    }
+    Sleep(100);
+    GetPath(path[x][y].x, path[x][y].y);
 }
 
-int AstarPathFind::GetH(node first, node second) {
-    int h_dis = min(abs(first.x - second.x), abs(first.y - second.y));
-    int h_str = abs(first.x - second.x) + abs(first.y - second.y);
-    return (14 * h_dis + 10 * (h_str - 2 * h_dis));
+int AstarPathFind::GetH(AstarNode first, AstarNode second) {
+    int x = abs(first.x - second.x) * 10;
+    int y = abs(first.y - second.y) * 10;
+    return x + y;
 }
 
-bool AstarPathFind::IsInclude(Queue<node> set, node qur) {
-    Queue<node> tmpSet;
+bool AstarPathFind::IsInclude(Queue<AstarNode> set, AstarNode qur) {
+    Queue<AstarNode> tmpSet;
     while (!set.IsEmpty()) {
-        node now = set.PopFront();
+        AstarNode now = set.PopFront();
         tmpSet.PushBack(now);
     }
     int flag = 0;
     while (!tmpSet.IsEmpty()) {
-        node now = tmpSet.PopFront();
+        AstarNode now = tmpSet.PopFront();
         set.PushBack(now);
         if (now.x == qur.x && now.y == qur.y)
             flag = 1;
@@ -160,12 +145,12 @@ bool AstarPathFind::IsInclude(Queue<node> set, node qur) {
     return false;
 }
 
-Queue<node> AstarPathFind::FindMinNodeF(Queue<node> set) {
+Queue<AstarNode> AstarPathFind::FindMinNodeF(Queue<AstarNode> set) {
     int minF = 0x3f3f3f3f, cnt = 0;
     int len = set.Length();
-    node recode;
+    AstarNode recode;
     for (int i = 0; i < len; i++) {
-        node now = set.PopFront();
+        AstarNode now = set.PopFront();
         if (now.f < minF) {
             if (cnt != 0)
                 set.PushBack(recode);
@@ -186,9 +171,11 @@ void AstarPathFind::StartSearch() {
     openSet.PushFront(start);
     while (!openSet.IsEmpty()) {
         openSet = FindMinNodeF(openSet);
-        node now = openSet.Front();
+        AstarNode now = openSet.Front();
+        color(10);
+        gotoxy(now.x * 2, now.y);
+        cout << sing[now.dir];
         if (now.x == finish.x && now.y == finish.y) {
-            color(11);
             GetPath(finish.x, finish.y);
             break;
         }
@@ -198,19 +185,22 @@ void AstarPathFind::StartSearch() {
             flag = 0;
             int tx = now.x + next[i][0];
             int ty = now.y + next[i][1];
-            node nei = nodeMaze[tx][ty];
+            AstarNode nei = nodeMaze[tx][ty];
             nei.dir = i;
             if (maze[tx][ty] == '#' || tx > mazeLength || tx < 1 || ty > mazeHeight || ty < 1)
                 continue;
             if (IsInclude(closeSet, nei))
                 continue;
-            node tmp;
+            AstarNode tmp;
             tmp.g = now.g + 10;
             if (!IsInclude(openSet, nei)) {
                 path[tx][ty].x = now.x;
                 path[tx][ty].y = now.y;
                 openSet.PushFront(nei);
                 flag = 1;
+                color(10);
+                gotoxy(now.x * 2, now.y);
+                cout << sing[now.dir];
             }
             else if (tmp.g >= nei.g)
                 continue;
@@ -223,9 +213,10 @@ void AstarPathFind::StartSearch() {
             nei.f = nei.g + nei.h;
             nodeMaze[tx][ty] = nei;
             openSet.PushFront(nei);
+            color(10);
+            gotoxy(now.x * 2, now.y);
+            cout << sing[now.dir];
         }
-        ShowPath();
-        Sleep(100);
+       Sleep(100);
     }
-    gotoxy(mazeHeight * 2 + 1, 0);
 }
